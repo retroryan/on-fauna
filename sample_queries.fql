@@ -1,0 +1,78 @@
+CreateClass({ name: "customer" })
+
+CreateIndex(
+{
+  name: "all_customers",
+  source: Class("customer")
+})
+
+Paginate(Match(Index("all_customers")))
+
+Get(Ref(Class("customer"), "207443833420513794"))
+
+Map(
+  Paginate(Match(Index("all_customers"))),
+  Lambda("cst",
+      Get(Var("cst"))
+    )
+)
+
+Get(Index("customer_by_id"))
+
+Paginate(Match(Index("customer_by_id"), "QUEEN"))
+
+Map(
+  Paginate(Match(Index("customer_by_id"), "QUEEN")),
+  Lambda("cst",
+      Get(Var("cst"))
+    )
+)
+
+Map(
+  Paginate(Match(Index("order_by_id"), 11072)),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Select((["data","customerID"]),Get(Var("ordr")))
+             },
+             Map(
+               Paginate(Match(Index("customer_by_id"), Var("customerID"))),
+               Lambda("cst",
+                   [Var("customer"), Get(Var("cst"))]
+                 )
+             )
+         )
+    )
+)
+
+
+Map(
+  Paginate(Match(Index("order_by_id"), 11072)),
+  Lambda("ordr",
+      Select((["data","customerID"]),Get(Var("ordr")))
+    )
+)
+
+#Try query with PICCO, LONEP
+Map(
+  Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+  Lambda("ordr",
+      Get(Var("ordr"))
+    )
+)
+
+Map(
+  Paginate(Match(Index("employee_by_id"), 6)),
+  Lambda("cst",
+      Get(Var("cst"))
+    )
+)
+
+CreateIndex(
+{
+  name: "order_with_customer_id",
+  source: Class("customer"),
+  terms: [{ field: ["data", "orderID"] }],
+  values: [{ field: ["data", "counter"] }, { field: ["data","path_refs"] }]
+})
