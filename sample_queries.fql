@@ -1,4 +1,5 @@
 CreateClass({ name: "customer" })
+CreateClass({ name: "customer" })
 
 CreateIndex(
 {
