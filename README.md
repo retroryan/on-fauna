@@ -21,6 +21,248 @@ Create a database and enter the shell to interact with the database
 
 Create the initial classes
 ```
-    CreateClass({ name: "customer" })
-    CreateClass({ name: "order" })
+    CreateClass({name: "customer"})
+    CreateClass({name: "order"})
 ```
+
+Create the indexes
+```
+    CreateIndex(
+    {
+      name: "all_customers",
+      source: Class("customer")
+    })
+
+    CreateIndex(
+        {
+          name: "customers_by_id",
+          source: Class("customer"),
+          terms: [{ field: ["data", "customerID"] }],
+          values: [{ field: ["ref"]}]
+        })
+
+    CreateIndex(
+    {
+      name: "orders_by_customer_id",
+      source: Class("order"),
+      terms: [{ field: ["data", "customerID"] }],
+      values: [{ field: ["ref"]}]
+    })
+```
+
+Query the schema
+
+```
+    Paginate(Classes(null))
+    Get(Class("customer"))
+    Paginate(Indexes(null))
+```
+
+## Exercise 3 - Enter some test data
+
+```
+Create(Class("customer"),{
+        data:{
+            "customerID" : "PRINI",
+            "companyName" : "Princesa Isabel Vinhos",
+            "contactName" : "Isabel de Castro",
+            "contactTitle" : "Sales Representative",
+            "address" : {
+                "street" : "Estrada da saúde n. 58",
+                "city" : "Lisboa",
+                "region" : "NULL",
+                "postalCode" : "1756",
+                "country" : "Portugal",
+                "phone" : "(1) 356-5634"
+            }
+	    }
+})
+
+Create(Class("customer"),{
+    data:{
+		"customerID" : "LONEP",
+		"companyName" : "Lonesome Pine Restaurant",
+		"contactName" : "Fran Wilson",
+		"contactTitle" : "Sales Manager",
+		"address" : {
+			"street" : "89 Chiaroscuro Rd.",
+			"city" : "Portland",
+			"region" : "OR",
+			"postalCode" : "97219",
+			"country" : "USA",
+			"phone" : "(503) 555-9573"
+		}
+	}
+})
+
+Create(Class("customer"),{
+    data:{
+		"customerID" : "QUEEN",
+		"companyName" : "Queen Cozinha",
+		"contactName" : "Lúcia Carvalho",
+		"contactTitle" : "Marketing Assistant",
+		"address" : {
+			"street" : "Alameda dos Canàrios 891",
+			"city" : "Sao Paulo",
+			"region" : "SP",
+			"postalCode" : "05487-020",
+			"country" : "Brazil",
+			"phone" : "(11) 555-1189"
+		}
+	}
+})
+
+Create(Class("order"),{
+    data:{
+		"orderID" : 10914,
+		"customerID" : "QUEEN",
+		"employeeID" : 6,
+		"orderDate" : "1998-02-27 00:00:00.000",
+		"requiredDate" : "1998-03-27 00:00:00.000",
+		"shippedDate" : "1998-03-02 00:00:00.000",
+		"shipVia" : 1,
+		"freight" : 21.19,
+		"shipName" : "Queen Cozinha",
+		"shipAddress" : {
+			"street" : "Alameda dos Canàrios 891",
+			"city" : "Sao Paulo",
+			"region" : "SP",
+			"postalCode" : "05487-020",
+			"country" : "Brazil"
+		},
+		"details" : [
+			{
+				"productID" : 71,
+				"unitPrice" : 21.5,
+				"quantity" : 25,
+				"discount" : 0
+			}
+		]
+	}
+})
+
+Create(Class("order"),{
+    data:{
+		"orderID" : 10914,
+		"customerID" : "QUEEN",
+		"employeeID" : 6,
+		"orderDate" : "1998-02-27 00:00:00.000",
+		"requiredDate" : "1998-03-27 00:00:00.000",
+		"shippedDate" : "1998-03-02 00:00:00.000",
+		"shipVia" : 1,
+		"freight" : 21.19,
+		"shipName" : "Queen Cozinha",
+		"shipAddress" : {
+			"street" : "Alameda dos Canàrios 891",
+			"city" : "Sao Paulo",
+			"region" : "SP",
+			"postalCode" : "05487-020",
+			"country" : "Brazil"
+		},
+		"details" : [
+			{
+				"productID" : 71,
+				"unitPrice" : 21.5,
+				"quantity" : 25,
+				"discount" : 0
+			}
+		]
+	}
+})
+
+Create(Class("order"),{
+    data:{
+		"orderID" : 10372,
+		"customerID" : "QUEEN",
+		"employeeID" : 5,
+		"orderDate" : "1996-12-04 00:00:00.000",
+		"requiredDate" : "1997-01-01 00:00:00.000",
+		"shippedDate" : "1996-12-09 00:00:00.000",
+		"shipVia" : 2,
+		"freight" : 890.78,
+		"shipName" : "Queen Cozinha",
+		"shipAddress" : {
+			"street" : "Alameda dos Canàrios 891",
+			"city" : "Sao Paulo",
+			"region" : "SP",
+			"postalCode" : "05487-020",
+			"country" : "Brazil"
+		},
+		"details" : [
+			{
+				"productID" : 20,
+				"unitPrice" : 64.8,
+				"quantity" : 12,
+				"discount" : 0.25
+			},
+			{
+				"productID" : 38,
+				"unitPrice" : 210.8,
+				"quantity" : 40,
+				"discount" : 0.25
+			},
+			{
+				"productID" : 60,
+				"unitPrice" : 27.2,
+				"quantity" : 70,
+				"discount" : 0.25
+			},
+			{
+				"productID" : 72,
+				"unitPrice" : 27.8,
+				"quantity" : 42,
+				"discount" : 0.25
+			}
+		]
+	}
+})
+
+## Exercise 4 - Basic Queries
+
+Match(Index("all_customers"))
+
+Paginate(Match(Index("all_customers")))
+
+Map(
+  Paginate(Match(Index("all_customers"))),
+  Lambda("cst",
+      Get(Var("cst"))
+    )
+)
+
+Update(
+    Ref(Class("customer"), "207455490912813568"),
+        { data: { contactTitle: ["Marketing Director"] } }
+)
+
+Update(
+    Ref(Class("customer"), "207455490912813568"),
+        { data: { flag: ["VIP Customer!", "High Value Customer"] } }
+)
+
+Map(
+  Paginate(Match(Index("orders_by_customer_id"), "QUEEN")),
+  Lambda("ord",
+      Get(Var("ord"))
+    )
+)
+
+Replace(
+    Ref(Class("customer"), "207455490912813568"),{
+        data:{
+            "customerID" : "PRINI",
+            "contactName" : "Isabel de Pineada"
+	    }
+    }
+)
+
+## Exercise 5 - Load the test Data
+
+## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
+
+## Exercise 7 - Uniqueness Constraints with Index - Enforcing a UID
+
+## Exercise 8 - Temporality
+
+## Exercise 9 - Security
+
