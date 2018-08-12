@@ -22,11 +22,22 @@ Get(Index("customer_by_id"))
 Paginate(Match(Index("customer_by_id"), "QUEEN"))
 
 Map(
-  Paginate(Match(Index("customer_by_id"), "QUEEN")),
+  Paginate(
+        Union(
+            Match(Index("orders_by_customer_id"), "NORTS"),
+            Match(Index("orders_by_customer_id"), "QUEDE"),
+            Match(Index("orders_by_customer_id"), "QUICK"),
+            Match(Index("orders_by_customer_id"), "SEVES"),
+            Match(Index("orders_by_customer_id"), "TORTU"),
+            Match(Index("orders_by_customer_id"), "THEBI")
+        )
+  ),
   Lambda("cst",
-      Get(Var("cst"))
+      SelectAll(["data","details"],Get(Var("cst")))
     )
 )
+
+
 
 Map(
   Paginate(Match(Index("order_by_id"), 11072)),

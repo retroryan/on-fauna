@@ -4,7 +4,6 @@ import faunadb.FaunaClient
 import faunadb.query._
 import faunadb.values.{Encoder, Value}
 import grizzled.slf4j.Logging
-import ledger.{FaunaDBConfig, JsonUtil}
 
 import scala.concurrent.{ExecutionContext, Future}
 

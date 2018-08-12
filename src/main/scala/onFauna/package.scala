@@ -34,5 +34,5 @@ package object onFauna {
     }
   }
 
-  def await[T](f: Future[T]): T = Await.result(f, 5.second)
+  def await[T](f: Future[T]): T = Await.result(f, 15.second)
 }

@@ -5,7 +5,6 @@ import faunadb.values.Codec
 import grizzled.slf4j.Logging
 import io.circe._
 import io.circe.generic.semiauto._
-import ledger.JsonUtil
 import onFauna.FaunaUtils.{RefField, TermField, createClass, createIndex}
 
 import scala.concurrent.{ExecutionContext, Future}
