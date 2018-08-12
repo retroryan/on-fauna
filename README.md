@@ -12,12 +12,15 @@
 
 ## Exercise 2 - Create a Basic Schema in the Fauna Shell
 
-1. `fauna create-database demo`
+Create a database and enter the shell to interact with the database
 
-1. `fauna shell demo`
+```
+    fauna create-database demo
+    fauna shell demo
+```
 
-1. `CreateClass({ name: "customer" })`
-
-1. `CreateClass({ name: "order" })`
-
-1. `fauna create-database demo`
+Create the initial classes
+```
+    CreateClass({ name: "customer" })
+    CreateClass({ name: "order" })
+```
