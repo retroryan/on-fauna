@@ -1,3 +1,4 @@
+
 name := "on-fauna"
 
 version := "0.1"
@@ -24,6 +25,8 @@ lazy val root = project.in(file("."))
    ),
     trapExit := false
   )
+  .enablePlugins(JavaAppPackaging)
+
 
 
 lazy val common =

@@ -61,12 +61,12 @@ Map(
 
 
 Map(
-  Paginate(Match(Index("order_by_id"), 11072)),
+  Paginate(Match(Index("order_by_id"), 10307)),
   Lambda("ordr",
        Let(
              {
                 customer: Get(Var("ordr")),
-                customerID: Select((["data","customerID"]),Get(Var("ordr")))
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
              },
              Map(
                Paginate(Match(Index("customer_by_id"), Var("customerID"))),
@@ -94,12 +94,150 @@ Map(
     )
 )
 
+
+# Select Queries
+
+Paginate(Match(Index("orders_by_customer_id"), "QUEEN"))
+
 Map(
-  Paginate(Match(Index("employee_by_id"), 6)),
-  Lambda("cst",
-      Get(Var("cst"))
+  Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+  Lambda("ordr",
+      Var("ordr")
     )
 )
+
+Map(
+   Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+   Lambda("ordr",
+       Select(2,Var("ordr"))
+     )
+ )
+
+
+Map(
+   Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+   Lambda("ordr",
+       Get(Select(2,Var("ordr")))
+     )
+ )
+
+Map(
+    Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+    Lambda("ordr",
+        Select(["data","details"],
+            Get(Select(2,Var("ordr")))
+        )
+      )
+)
+
+Map(
+    Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+    Lambda("ordr",
+        SelectAll(["data","details", "productID"],
+            Get(Select(2,Var("ordr")))
+        )
+      )
+)
+
+Map(
+  Paginate(Match(Index("order_by_id"), 10307)),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Match(Index("customer_by_id"), Var("customerID"))),
+               Lambda("cst",
+                   [Var("customer"), Get(Var("cst"))]
+                 )
+             )
+         )
+    )
+)
+
+Map(
+  Paginate(Match(Index("all_orders")),{size:100}),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Match(Index("customer_by_id"), Var("customerID"))),
+               Lambda("cst",
+                   Get(Var("cst")
+                 )
+                )
+             )
+        )
+    )
+)
+
+Map(
+  Paginate(Match(Index("all_orders")),{size:100}),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Match(Index("customer_by_id"), Var("customerID"))),
+               Lambda("cst",
+                   SelectAll(["data", "customerID"],Get(Var("cst")))
+                 )
+
+             )
+        )
+    )
+)
+
+Map(
+  Paginate(Match(Index("all_orders")),{size:1000}),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Distinct(Match(Index("customer_by_id"), Var("customerID")))),
+               Lambda("cst",
+                   SelectAll(["data", "customerID"],Get(Var("cst")))
+                 )
+
+             )
+        )
+    )
+)
+
+Map(
+  Paginate(Match(Index("all_orders")),{size:1000}),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+
+             },
+             Let( {
+                 customerID: Casefold(Select((["data","customerID"]),Var("customer"))),
+                 Map(
+                   Paginate(Distinct(Match(Index("customer_by_id"), Var("customerID")))),
+                   Lambda("cst",
+                       SelectAll(["data", "customerID"],Get(Var("cst")))
+                     )
+
+                 )
+             })
+        )
+    )
+)
+
+
+#Sample Indexes
 
 CreateIndex(
 {
@@ -109,10 +247,3 @@ CreateIndex(
   values: [{ field: ["data", "counter"] }, { field: ["data","path_refs"] }]
 })
 
-CreateIndex(
-{
-  name: "o1",
-  source: Class("order"),
-  terms: [{ field: ["data", "orderID"] }],
-  values: [{ field: ["data", "orderDate"] }, { field: ["data","shippedDate"] }]
-})

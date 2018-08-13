@@ -262,11 +262,108 @@ Replace(
 
 ## Exercise 5 - Load the test Data
 
+In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fauna.com/keys)
+
 ```
-java -jar on-fauna
+    export FAUNA_SECRET= ...
+    unzip on-fauna-0.1.zip
+    cd on-fauna-0.1
+    bin/on-fauna
 ```
 
 ## Exercise 6 - Understanding Paginate and Select
+
+```
+
+Paginate(Match(Index("orders_by_customer_id"), "LONEP"))
+
+Map(
+  Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+  Lambda("ordr",
+      Var("ordr")
+    )
+)
+
+Map(
+   Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+   Lambda("ordr",
+       Select(2,Var("ordr"))
+     )
+ )
+
+
+Map(
+   Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+   Lambda("ordr",
+       Get(Select(2,Var("ordr")))
+     )
+ )
+
+Map(
+    Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+    Lambda("ordr",
+        Select(["data","details"],
+            Get(Select(2,Var("ordr")))
+        )
+      )
+)
+
+Map(
+    Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+    Lambda("ordr",
+        SelectAll(["data","details", "productID"],
+            Get(Select(2,Var("ordr")))
+        )
+      )
+)
+
+Map(
+    Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+    Lambda("ordr",
+        SelectAll(["data","details", "productID"],
+            Get(Select(2,Var("ordr")))
+        )
+      )
+)
+
+Map(
+  Paginate(Match(Index("order_by_id"), 10307)),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Match(Index("customer_by_id"), Var("customerID"))),
+               Lambda("cst",
+                   [Var("customer"), Get(Var("cst"))]
+                 )
+             )
+         )
+    )
+)
+
+Map(
+  Paginate(Match(Index("all_orders")),{size:1000}),
+  Lambda("ordr",
+       Let(
+             {
+                customer: Get(Var("ordr")),
+                customerID: Casefold(Select((["data","customerID"]),Get(Var("ordr"))))
+             },
+             Map(
+               Paginate(Distinct(Match(Index("customer_by_id"), Var("customerID")))),
+               Lambda("cst",
+                   SelectAll(["data", "customerID"],Get(Var("cst")))
+                 )
+
+             )
+        )
+    )
+)
+
+```
 
 ## Exercise 7 - Indexes in Depth - Sorting, Transformation and Pagination
 
