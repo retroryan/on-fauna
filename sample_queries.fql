@@ -94,6 +94,12 @@ Map(
     )
 )
 
+# Paginate Queries
+
+
+Paginate(Match(Index("all_orders_by_customer_id")), {size:50, after:"LONEP"})
+
+Paginate(Match(Index("all_orders_by_customer_id")), {size:50, before:"LONEP"})
 
 # Select Queries
 

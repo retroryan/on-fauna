@@ -55,7 +55,14 @@ object Order extends Logging {
         customerTermFields, Seq(ValueField("orderDate",reverse = true),ValueField("orderID"), RefField()))
 
       createNestedCustomerIdIndexResult <- createIndex("nested_orders_by_customer_id", CLASS_NAME,
-        customerTermFields, Seq(ValueField("orderDate",reverse = true),ValueField("orderID"),NestedValueField("details", "unitPrice"), RefField()))
+        customerTermFields, Seq(ValueField("orderDate",reverse = true),ValueField("orderID"),
+          NestedValueField("details", "unitPrice"), RefField()))
+
+      allOrdersCustomerIdIndexResult <- createIndex("all_orders_by_customer_id", CLASS_NAME,
+        Seq(), Seq(ValueField("customerID"),ValueField("orderID"), RefField()))
+
+      allOrdersByDateIndexResult <- createIndex("all_orders_by_date", CLASS_NAME,
+        Seq(), Seq(ValueField("orderDate"),ValueField("orderID"), RefField()))
 
       createClassIndexResult <- createClassIndex(CLASS_NAME)
     } yield {

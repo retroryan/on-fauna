@@ -271,7 +271,22 @@ In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fa
     bin/on-fauna
 ```
 
-## Exercise 6 - Understanding Paginate and Select
+## Exercise 6 - Understanding Paginate
+
+Paginate(Indexes(null))
+
+Paginate(Match(Index("all_orders")), {size:10})
+
+Paginate(Match(Index("all_orders_by_customer_id")), {size:50, after:"LONEP"})
+
+Paginate(Match(Index("all_orders_by_customer_id")), {size:50, before:"LONEP"})
+
+Paginate(Match(Index("all_orders_by_date")), {size:10, after:Date("1998-01-01")})
+
+Paginate(Match(Index("all_orders_by_date")), {size:10, before:Date("1998-01-01")})
+
+
+## Exercise 7 - Understanding Select
 
 ```
 
@@ -364,6 +379,8 @@ Map(
 )
 
 ```
+
+
 
 ## Exercise 7 - Indexes in Depth - Sorting, Transformation and Pagination
 
