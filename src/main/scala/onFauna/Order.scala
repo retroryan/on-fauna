@@ -52,19 +52,21 @@ object Order extends Logging {
       createIndexResult <- createIndex(INDEX_NAME, CLASS_NAME, termFields, valueFields)
 
       createCustomerIdIndexResult <- createIndex("orders_by_customer_id", CLASS_NAME,
-        customerTermFields, Seq(ValueField("orderDate",reverse = true),ValueField("orderID"), RefField()))
+        customerTermFields, Seq(ValueField("orderDate", reverse = true), ValueField("orderID"), RefField()))
 
       createNestedCustomerIdIndexResult <- createIndex("nested_orders_by_customer_id", CLASS_NAME,
-        customerTermFields, Seq(ValueField("orderDate",reverse = true),ValueField("orderID"),
+        customerTermFields, Seq(ValueField("orderDate", reverse = true), ValueField("orderID"),
           NestedValueField("details", "unitPrice"), RefField()))
 
       allOrdersCustomerIdIndexResult <- createIndex("all_orders_by_customer_id", CLASS_NAME,
-        Seq(), Seq(ValueField("customerID"),ValueField("orderID"), RefField()))
+        Seq(), Seq(ValueField("customerID"), ValueField("orderID"), RefField()))
 
       allOrdersByDateIndexResult <- createIndex("all_orders_by_date", CLASS_NAME,
-        Seq(), Seq(ValueField("orderDate"),ValueField("orderID"), RefField()))
+        Seq(), Seq(ValueField("orderDate"), ValueField("orderID"), RefField()))
 
-      createClassIndexResult <- createClassIndex(CLASS_NAME)
+      createClassIndexResult <- createIndex("all_orders", CLASS_NAME,
+        Seq(), Seq(ValueField("orderID", reverse = true), ValueField("orderDate"), ValueField("customerID")))
+
     } yield {
       logger.info(s"Created order class index class")
       logger.info(s"Created $CLASS_NAME class")

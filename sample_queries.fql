@@ -225,7 +225,7 @@ Map(
   Lambda("ordr",
        Let(
              {
-                customer: Get(Var("ordr")),
+                customer: Get(Var("ordr"))
 
              },
              Let( {
@@ -253,3 +253,102 @@ CreateIndex(
   values: [{ field: ["data", "counter"] }, { field: ["data","path_refs"] }]
 })
 
+#Counter Class
+
+CreateClass({ name: "order" })
+
+CreateIndex(
+{
+  name: "orders_uid",
+  source: Class("order"),
+  values: [{ field: ["data", "orderID"], reverse:true },
+           { field: ["data","customerID"] }]
+
+})
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Var("head")
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     last_index:Select([0,0],Var("head"))
+    },
+    Var("last_index")
+   )
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     last_index:Select([0,0],Var("head"))
+    },
+    Create(Class("order"),{
+        data:{
+    		"orderID" : Add(Var("last_index"),1),
+    		"customerID" : "RICAR",
+    		"employeeID" : 6,
+    		"description" : "please rush shipment"
+    	}
+    })
+   )
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     last_index:Select([0,0],Var("head"))
+    },
+    Create(Class("order"),{
+        data:{
+    		"orderID" : Add(Var("last_index"),1),
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"description" : "priority shipment"
+    	}
+    })
+   )
+)
+
+Update(Index("all_orders"), {serialized:true})
+
+Update(Index("all_orders"), {unique:true})
+
+Create(Class("order"),{
+        data:{
+    		"orderID" : 11079,
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"description" : "priority shipment"
+    	}
+    })
+
+
+CreateClass({ name: "task" })
+
+CreateFunction({
+    name: "create_task",
+    body: Query(
+      Lambda(
+        ["description"],
+        Create(Class("task"),{data:{"taskID" : 12079,"description" : Var("description")}})
+      )
+    )
+})
+
+
+Call(Function("create_task", "BLABLA"))
+
+Delete(Function("create_task"))
+
+"productID" : 7

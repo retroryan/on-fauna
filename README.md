@@ -1,5 +1,11 @@
 # On Fauna Workshop
 
+Checkout this repository
+
+```
+git clone git@github.com:retroryan/on-fauna.git
+```
+
 ## Exercise 1 - Setup the Fauna Shell
 
 1. Create a cloud account on the [fauna website](https://fauna.com/)
@@ -22,7 +28,6 @@ Create a database and enter the shell to interact with the database
 Create the initial classes
 ```
     CreateClass({name: "customer"})
-    CreateClass({name: "order"})
 ```
 
 Create the indexes
@@ -41,13 +46,6 @@ Create the indexes
           values: [{ field: ["ref"]}]
         })
 
-    CreateIndex(
-    {
-      name: "orders_by_customer_id",
-      source: Class("order"),
-      terms: [{ field: ["data", "customerID"] }],
-      values: [{ field: ["ref"]}]
-    })
 ```
 
 Query the schema
@@ -95,127 +93,6 @@ Create(Class("customer"),{
 	}
 })
 
-Create(Class("customer"),{
-    data:{
-		"customerID" : "QUEEN",
-		"companyName" : "Queen Cozinha",
-		"contactName" : "Lúcia Carvalho",
-		"contactTitle" : "Marketing Assistant",
-		"address" : {
-			"street" : "Alameda dos Canàrios 891",
-			"city" : "Sao Paulo",
-			"region" : "SP",
-			"postalCode" : "05487-020",
-			"country" : "Brazil",
-			"phone" : "(11) 555-1189"
-		}
-	}
-})
-
-Create(Class("order"),{
-    data:{
-		"orderID" : 10914,
-		"customerID" : "QUEEN",
-		"employeeID" : 6,
-		"orderDate" : "1998-02-27 00:00:00.000",
-		"requiredDate" : "1998-03-27 00:00:00.000",
-		"shippedDate" : "1998-03-02 00:00:00.000",
-		"shipVia" : 1,
-		"freight" : 21.19,
-		"shipName" : "Queen Cozinha",
-		"shipAddress" : {
-			"street" : "Alameda dos Canàrios 891",
-			"city" : "Sao Paulo",
-			"region" : "SP",
-			"postalCode" : "05487-020",
-			"country" : "Brazil"
-		},
-		"details" : [
-			{
-				"productID" : 71,
-				"unitPrice" : 21.5,
-				"quantity" : 25,
-				"discount" : 0
-			}
-		]
-	}
-})
-
-Create(Class("order"),{
-    data:{
-		"orderID" : 10914,
-		"customerID" : "QUEEN",
-		"employeeID" : 6,
-		"orderDate" : "1998-02-27 00:00:00.000",
-		"requiredDate" : "1998-03-27 00:00:00.000",
-		"shippedDate" : "1998-03-02 00:00:00.000",
-		"shipVia" : 1,
-		"freight" : 21.19,
-		"shipName" : "Queen Cozinha",
-		"shipAddress" : {
-			"street" : "Alameda dos Canàrios 891",
-			"city" : "Sao Paulo",
-			"region" : "SP",
-			"postalCode" : "05487-020",
-			"country" : "Brazil"
-		},
-		"details" : [
-			{
-				"productID" : 71,
-				"unitPrice" : 21.5,
-				"quantity" : 25,
-				"discount" : 0
-			}
-		]
-	}
-})
-
-Create(Class("order"),{
-    data:{
-		"orderID" : 10372,
-		"customerID" : "QUEEN",
-		"employeeID" : 5,
-		"orderDate" : "1996-12-04 00:00:00.000",
-		"requiredDate" : "1997-01-01 00:00:00.000",
-		"shippedDate" : "1996-12-09 00:00:00.000",
-		"shipVia" : 2,
-		"freight" : 890.78,
-		"shipName" : "Queen Cozinha",
-		"shipAddress" : {
-			"street" : "Alameda dos Canàrios 891",
-			"city" : "Sao Paulo",
-			"region" : "SP",
-			"postalCode" : "05487-020",
-			"country" : "Brazil"
-		},
-		"details" : [
-			{
-				"productID" : 20,
-				"unitPrice" : 64.8,
-				"quantity" : 12,
-				"discount" : 0.25
-			},
-			{
-				"productID" : 38,
-				"unitPrice" : 210.8,
-				"quantity" : 40,
-				"discount" : 0.25
-			},
-			{
-				"productID" : 60,
-				"unitPrice" : 27.2,
-				"quantity" : 70,
-				"discount" : 0.25
-			},
-			{
-				"productID" : 72,
-				"unitPrice" : 27.8,
-				"quantity" : 42,
-				"discount" : 0.25
-			}
-		]
-	}
-})
 
 ```
 
@@ -255,7 +132,7 @@ Replace(
 
 ## Exercise 5 - Load the test Data
 
-In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fauna.com/keys)
+In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fauna.com/keys) and then set it in the terminal window
 
 ```
     export FAUNA_SECRET= ...
@@ -264,7 +141,15 @@ In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fa
     bin/on-fauna
 ```
 
+Now login to the fauna shell to the new database
+
+```
+    fauna shell northwinds
+```
+
 ## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
+
+Look at all the indexes that have been created
 
 ```
 Paginate(Indexes(null))
@@ -381,7 +266,138 @@ Map(
 
 ## Exercise 9 - Uniqueness Constraints with Index - Enforcing a UID
 
+```
+
+Get(Index("all_orders"))
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Var("head")
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     // Select the last index out of the order details
+     last_index:Select([0,0],Var("head"))
+    },
+    Var("last_index")
+   )
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     // Select the last index out of the order details
+     last_index:Select([0,0],Var("head"))
+    },
+    // Create a new order using the last index from let
+    Create(Class("order"),{
+        data:{
+    		"orderID" : Add(Var("last_index"),1),
+    		"customerID" : "RICAR",
+    		"employeeID" : 6,
+    		"productID" : 7,
+    		"description" : "please rush shipment"
+    	}
+    })
+   )
+)
+
+Let( {
+  // Get the latest orders.
+  head:Paginate(Match(Index("all_orders")), {size:1})
+  },
+  Let({
+     // Select the last index out of the order details
+     last_index:Select([0,0],Var("head"))
+    },
+    // Create a new order using the last index from let
+    Create(Class("order"),{
+        data:{
+    		"orderID" : Add(Var("last_index"),1),
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"productID" : 15,
+    		"description" : "priority shipment"
+    	}
+    })
+   )
+)
+
+Update(Index("all_orders"), {unique:true})
+
+Create(Class("order"),{
+        data:{
+    		"orderID" : 11081,
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"productID" : 21,
+    		"description" : "priority shipment"
+    	}
+    })
+
+```
+
+Save the timestamp from this create for the next exercises
+
+// ts: 1534144059100282
+
 ## Exercise 10 - Temporality
+
+First Modify the last order we entered by getting the last orders for Ernsh
+
+```
+Paginate(
+    Match(Index("orders_by_customer_id"),"ERNSH")
+)
+
+Update(
+    Ref(Class("order"), "207497681089593858"),
+        { data: { productID: 12, tag: "update order" } }
+)
+```
+
+Using the date saved on the last timestamp look at the order history before and after changing
+
+```
+Paginate(
+    Match(
+    Index("orders_by_customer_id"),"ERNSH"),
+        { ts: 1534144059100182 }
+)
+
+
+Paginate(
+    Match(
+    Index("order_by_id"),11081),
+        {after: 1534144059100182, events:true }
+)
+```
+
+Get the latest orders since the last timestamp
+
+```
+
+Create(Class("order"),{
+        data:{
+    		"orderID" : 11082,
+    		"customerID" : "LILAS",
+    		"employeeID" : 6,
+    		"productID" : 11,
+    		"description" : "please wrap"
+    	}
+    })
+
+Paginate(Match(Index("all_orders")), {after:1534144059100182})
+
+```
 
 ## Exercise 11 - Security
 
