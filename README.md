@@ -243,13 +243,6 @@ Update(
         { data: { flag: ["VIP Customer!", "High Value Customer"] } }
 )
 
-Map(
-  Paginate(Match(Index("orders_by_customer_id"), "QUEEN")),
-  Lambda("ord",
-      Get(Var("ord"))
-    )
-)
-
 Replace(
     Ref(Class("customer"), "207455490912813568"),{
         data:{
@@ -273,10 +266,13 @@ In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fa
 
 ## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
 
+```
 Paginate(Indexes(null))
+```
 
 ## Exercise 7 - Understanding Paginate
 
+```
 Paginate(Match(Index("all_orders")), {size:10})
 
 Paginate(Match(Index("all_orders_by_customer_id")), {size:50, after:"LONEP"})
@@ -287,11 +283,11 @@ Paginate(Match(Index("all_orders_by_date")), {size:10, after:Date("1998-01-01")}
 
 Paginate(Match(Index("all_orders_by_date")), {size:10, before:Date("1998-01-01")})
 
+```
 
 ## Exercise 8 - Understanding Select
 
 ```
-
 Paginate(Match(Index("orders_by_customer_id"), "LONEP"))
 
 Map(
