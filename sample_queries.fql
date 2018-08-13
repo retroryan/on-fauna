@@ -343,12 +343,59 @@ CreateFunction({
         ["description"],
         Create(Class("task"),{data:{"taskID" : 12079,"description" : Var("description")}})
       )
-    )
+    ),
+   permissions: { call: "public" }
 })
 
+permissions: { "call": ref(user.ref) }
 
-Call(Function("create_task", "BLABLA"))
+
+Call(Function("create_task"), ["Stuff"])
 
 Delete(Function("create_task"))
 
 "productID" : 7
+
+CreateFunction({
+		name: "get_val",
+		body: Query(Lambda(["class_name", "ref_id"],
+						Select(["data", "orderID"], Get(Ref(Class(Var("class_name")), Var("ref_id")))))),
+		permissions: { call: "public" }
+})
+
+Call(Function("get_val"), ["order", "207497570876917249"])
+
+Delete(Function("get_val"))
+
+Login(Ref(q.Class("task"), "181388642114077184"), { password: "abracadabra" }))
+
+CreateClass({ name: "authors" })
+
+Create(q.Class("authors"), {
+  data: { name: "pat" },
+  credentials: { password: "123456" }
+})
+
+q.Call(q.Function("get_val"), ["order", "207497570876917249"])
+
+
+Create(Class("order"),{
+        data:{
+    		"orderID" : 11095,
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"productID" : 21,
+    		"description" : "priority shipment"
+    	}
+    })
+
+
+
+Update(
+    Ref(Class("order"), "207553635813425668"),
+        { data: { productID: 12, tag: "update order" } }
+)
+
+Get(Ref(Class("order"),"207553635813425668"),1534197421684875)
+
+Paginate(Events(Ref(Class("order"), "207553635813425668")))

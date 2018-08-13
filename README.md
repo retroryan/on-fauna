@@ -335,7 +335,7 @@ Update(Index("all_orders"), {unique:true})
 
 Create(Class("order"),{
         data:{
-    		"orderID" : 11081,
+    		"orderID" : 11091,
     		"customerID" : "ERNSH",
     		"employeeID" : 6,
     		"productID" : 21,
@@ -345,40 +345,37 @@ Create(Class("order"),{
 
 ```
 
-Save the timestamp from this create for the next exercises
-
-// ts: 1534144059100282
-
 ## Exercise 10 - Temporality
 
-First Modify the last order we entered by getting the last orders for Ernsh
+Event types are different for sets vs. instances:
+
+sets have add/remove
+
+class instances have create/update/delete
+
+First delete the last order we entered by getting the last orders for Ernsh
 
 ```
-Paginate(
-    Match(Index("orders_by_customer_id"),"ERNSH")
-)
-
-Update(
-    Ref(Class("order"), "207497681089593858"),
-        { data: { productID: 12, tag: "update order" } }
+Map(
+    Paginate(
+        Match(Index("orders_by_customer_id"),"ERNSH"), {size:2}
+    ),
+    Lambda("ordr",
+        Delete(
+            Select([2],Var("ordr"))
+        )
+     )
 )
 ```
-
-Using the date saved on the last timestamp look at the order history before and after changing
 
 ```
 Paginate(
     Match(
     Index("orders_by_customer_id"),"ERNSH"),
-        { ts: 1534144059100182 }
+        { events:true }
 )
 
 
-Paginate(
-    Match(
-    Index("order_by_id"),11081),
-        {after: 1534144059100182, events:true }
-)
 ```
 
 Get the latest orders since the last timestamp
@@ -387,7 +384,7 @@ Get the latest orders since the last timestamp
 
 Create(Class("order"),{
         data:{
-    		"orderID" : 11082,
+    		"orderID" : 11089,
     		"customerID" : "LILAS",
     		"employeeID" : 6,
     		"productID" : 11,
@@ -395,9 +392,38 @@ Create(Class("order"),{
     	}
     })
 
-Paginate(Match(Index("all_orders")), {after:1534144059100182})
+Paginate(Match(Index("all_orders")), {after:1534198119501532})
 
 ```
 
-## Exercise 11 - Security
+Get the order from a specific time
 
+```
+
+Get(Ref(Class("order"), "207496352507101696") )
+
+Get(Ref(Class("order"), "207496352507101696"),1534142792066902 )
+```
+
+Look at the history of a class instance
+```
+Create(Class("order"),{
+        data:{
+    		"orderID" : 11095,
+    		"customerID" : "ERNSH",
+    		"employeeID" : 6,
+    		"productID" : 21,
+    		"description" : "priority shipment"
+    	}
+    })
+
+Update(
+    Ref(Class("order"), "207553635813425668"),
+        { data: { productID: 12, tag: "update order" } }
+)
+
+Get(Ref(Class("order"),"207553635813425668"),1534197421684875)
+
+Paginate(Events(Ref(Class("order"), "207553635813425668")))
+
+```
