@@ -18,9 +18,12 @@ object Main extends Logging {
     logger.info("starting graph ledger tests")
     implicit val faunaClient: FaunaClient = FaunaUtils.createFaunaClient(NORTHWINDS_DB)
 
-    createSchemas
-
-    loadData
+    try {
+      createSchemas
+      loadData
+    } finally {
+      faunaClient.close()
+    }
   }
 
   def createSchemas(implicit client: FaunaClient) = {
