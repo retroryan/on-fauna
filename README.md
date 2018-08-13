@@ -1,4 +1,4 @@
-# On Fauna Workshop using Fauna Shell
+# On Fauna Workshop using Fauna Shell and Indexes
 
 Checkout this repository
 
