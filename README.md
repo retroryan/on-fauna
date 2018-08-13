@@ -1,4 +1,4 @@
-# On Fauna Workshop
+# On Fauna Workshop using Fauna Shell
 
 Checkout this repository
 
