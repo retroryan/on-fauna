@@ -87,9 +87,11 @@ object FaunaUtils extends Logging {
 
   sealed trait Field
 
-  case class TermField(name: String) extends Field
+  case class TermField(name: String, casefold:Boolean = false) extends Field
 
-  case class ValueField(name: String, reverse: Boolean) extends Field
+  case class ValueField(name: String, reverse: Boolean = false) extends Field
+
+  case class NestedValueField(n1: String, n2:String, reverse: Boolean = false) extends Field
 
   case class RefField(name: String = "ref") extends Field
 
@@ -97,12 +99,17 @@ object FaunaUtils extends Logging {
     val indexObj = Index(indexName)
 
     val termsArr = terms.collect {
-      case term: TermField => Obj("field" -> Arr("data", term.name))
+      case term: TermField =>
+        if (term.casefold)
+          Obj("field" -> Arr("data", term.name), "transform" -> "casefold")
+        else
+          Obj("field" -> Arr("data", term.name))
       case refField: RefField => Obj("field" -> Arr("ref"))
     }
 
     val valuesArr = values.collect {
       case value: ValueField => Obj("field" -> Arr("data", value.name), "reverse" -> value.reverse)
+      case nestedValue: NestedValueField => Obj("field" -> Arr("data", nestedValue.n1, nestedValue.n2), "reverse" -> nestedValue.reverse)
       case refField: RefField => Obj("field" -> Arr("ref"))
     }
 
@@ -126,7 +133,7 @@ object FaunaUtils extends Logging {
   }
 
   def createClassIndex(className: String)(implicit client: FaunaClient, ec: ExecutionContext): Future[Value] = {
-    val indexName = s"${className}_class_index"
+    val indexName = s"all_${className}s"
 
     val indexObj = Index(indexName)
 
@@ -151,9 +158,11 @@ object FaunaUtils extends Logging {
         Obj("data" -> value))
     )
 
-   /* eventualValue.foreach {
+/*
+    eventualValue.foreach {
       strz => println(s"created: $strz")
-    }*/
+    }
+*/
     eventualValue.map(v => v.toString)
   }
 }

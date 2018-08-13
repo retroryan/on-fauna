@@ -1,5 +1,5 @@
 CreateClass({ name: "customer" })
-CreateClass({ name: "customer" })
+CreateClass({ name: "order" })
 
 CreateIndex(
 {
@@ -7,9 +7,19 @@ CreateIndex(
   source: Class("customer")
 })
 
+CreateIndex(
+{
+  name: "all_orders",
+  source: Class("order")
+})
+
+Paginate(Indexes(null))
+
 Paginate(Match(Index("all_customers")))
 
 Get(Ref(Class("customer"), "207443833420513794"))
+
+Paginate(Match(Index("all_orders")))
 
 Map(
   Paginate(Match(Index("all_customers"))),
@@ -18,9 +28,19 @@ Map(
     )
 )
 
+
+Map(
+  Paginate(Match(Index("all_orders"))),
+  Lambda("cst",
+      Get(Var("cst"))
+    )
+)
+
 Get(Index("customer_by_id"))
 
-Paginate(Match(Index("customer_by_id"), "QUEEN"))
+Paginate(Match(Index("customer_by_id"), Casefold("QUEEN")))
+
+Paginate(Match(Index("orders_by_customer_id"),"QUEEN"))
 
 Map(
   Paginate(
@@ -34,7 +54,7 @@ Map(
         )
   ),
   Lambda("cst",
-      SelectAll(["data","details"],Get(Var("cst")))
+      Select(["data","details"],Get(Var("cst")))
     )
 )
 
@@ -87,4 +107,12 @@ CreateIndex(
   source: Class("customer"),
   terms: [{ field: ["data", "orderID"] }],
   values: [{ field: ["data", "counter"] }, { field: ["data","path_refs"] }]
+})
+
+CreateIndex(
+{
+  name: "o1",
+  source: Class("order"),
+  terms: [{ field: ["data", "orderID"] }],
+  values: [{ field: ["data", "orderDate"] }, { field: ["data","shippedDate"] }]
 })

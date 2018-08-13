@@ -217,8 +217,11 @@ Create(Class("order"),{
 	}
 })
 
+```
+
 ## Exercise 4 - Basic Queries
 
+```
 Match(Index("all_customers"))
 
 Paginate(Match(Index("all_customers")))
@@ -255,14 +258,21 @@ Replace(
 	    }
     }
 )
+```
 
 ## Exercise 5 - Load the test Data
 
-## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
+```
+java -jar on-fauna
+```
 
-## Exercise 7 - Uniqueness Constraints with Index - Enforcing a UID
+## Exercise 6 - Understanding Paginate and Select
 
-## Exercise 8 - Temporality
+## Exercise 7 - Indexes in Depth - Sorting, Transformation and Pagination
 
-## Exercise 9 - Security
+## Exercise 8 - Uniqueness Constraints with Index - Enforcing a UID
+
+## Exercise 9 - Temporality
+
+## Exercise 10 - Security
 
