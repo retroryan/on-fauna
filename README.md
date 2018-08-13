@@ -147,7 +147,7 @@ Now login to the fauna shell to the new database
     fauna shell northwinds
 ```
 
-## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
+## Exercise 6 - Indexes in Depth - Sorting and Transformation
 
 Look at all the indexes that have been created
 
@@ -174,6 +174,10 @@ Paginate(Match(Index("all_orders_by_date")), {size:10, before:Date("1998-01-01")
 
 ```
 Paginate(Match(Index("orders_by_customer_id"), "LONEP"))
+
+Select(0,Paginate(Match(Index("orders_by_customer_id"), "LONEP")))
+
+Select([0,2],Paginate(Match(Index("orders_by_customer_id"), "LONEP")))
 
 Map(
   Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
