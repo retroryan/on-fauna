@@ -132,10 +132,27 @@ Replace(
 
 ## Exercise 5 - Load the test Data
 
+If you are running against the cloud first get your key.
+
 In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fauna.com/keys) and then set it in the terminal window
 
+And then run:
+
+
 ```
-    export FAUNA_SECRET= ...
+    export FAUNA_URL=http://localhost:8443
+    export FAUNA_SECRET=sdfef2f23432
+    export DB_NAME="northwinds"
+```
+
+To run against localhost or your own instance
+```
+    export FAUNA_URL=http://localhost:8443
+    export FAUNA_SECRET=secret
+    export DB_NAME="northwinds"
+```
+
+```
     unzip on-fauna-0.1.zip
     cd on-fauna-0.1
     bin/on-fauna

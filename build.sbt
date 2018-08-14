@@ -1,3 +1,5 @@
+import NativePackagerHelper._
+
 
 name := "on-fauna"
 
@@ -23,7 +25,8 @@ lazy val root = project.in(file("."))
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-parser" % circeVersion
    ),
-    trapExit := false
+    trapExit := false,
+    mappings in Universal ++= directory("datajson")
   )
   .enablePlugins(JavaAppPackaging)
 

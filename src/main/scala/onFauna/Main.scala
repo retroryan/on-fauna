@@ -11,12 +11,10 @@ import scala.concurrent.Future
 
 object Main extends Logging {
 
-  val NORTHWINDS_DB = "northwinds"
-
   def main(args: Array[String]): Unit = {
 
     logger.info("starting graph ledger tests")
-    implicit val faunaClient: FaunaClient = FaunaUtils.createFaunaClient(NORTHWINDS_DB)
+    implicit val faunaClient: FaunaClient = FaunaUtils.createFaunaClient
 
     try {
       createSchemas

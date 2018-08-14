@@ -9,37 +9,37 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object FaunaUtils extends Logging {
 
-  def createFaunaClient(dbName: String)(implicit ec: ExecutionContext): FaunaClient = {
+  def createFaunaClient(implicit ec: ExecutionContext): FaunaClient = {
     logger.info("starting create fauna client")
 
     val faunaDBConfig = FaunaDBConfig.getFaunaDBConfig
 
     //Create an admin client. This is the client we will use to create the database
-    //val adminClient = FaunaClient(faunaDBConfig.secret, faunaDBConfig.endPoint)
+    val adminClient = FaunaClient(faunaDBConfig.secret, faunaDBConfig.endPoint)
 
     //default to using the cloud end point
-    val adminClient = FaunaClient(faunaDBConfig.secret)
+    //val adminClient = FaunaClient(faunaDBConfig.secret)
 
     logger.info("Successfully connected to FaunaDB as Admin!")
 
-    val databaseRequest = createFaunaDatabase(dbName, faunaDBConfig.deleteDB, adminClient)
+    val databaseRequest = createFaunaDatabase(faunaDBConfig.dbName, faunaDBConfig.deleteDB, adminClient)
 
     //only block on startup when we create the database
     val createDBResponse = await(databaseRequest)
 
-    logger.info(s"Created database: $dbName :: \n${JsonUtil.toJson(createDBResponse)}")
+    logger.info(s"Created database: $faunaDBConfig.dbName :: \n${JsonUtil.toJson(createDBResponse)}")
 
     /*
     * Create a key specific to the database we just created. We will use this to
     * create a new client we will use in the remainder of the examples.
     */
     await(databaseRequest)
-    val eventualValue = adminClient.query(CreateKey(Obj("database" -> Database(dbName), "role" -> "server")))
+    val eventualValue = adminClient.query(CreateKey(Obj("database" -> Database(faunaDBConfig.dbName), "role" -> "server")))
     val keyReq = getEventualData[String](eventualValue, "secret")
     val serverKey = await(keyReq)
     adminClient.close
-    //FaunaClient(serverKey, faunaDBConfig.endPoint)
-    FaunaClient(serverKey)
+    FaunaClient(serverKey, faunaDBConfig.endPoint)
+    //FaunaClient(serverKey)
   }
 
   /*
