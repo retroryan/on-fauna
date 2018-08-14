@@ -20,13 +20,13 @@ Create the indexes
     q.CreateIndex(
     {
       name: "all_customers",
-      source: Class("customer")
+      source: q.Class("customer")
     })
 
     q.CreateIndex(
         {
           name: "customers_by_id",
-          source: Class("customer"),
+          source: q.Class("customer"),
           terms: [{ field: ["data", "customerID"] }],
           values: [{ field: ["ref"]}]
         })
@@ -36,15 +36,15 @@ Create the indexes
 Query the schema
 
 ```
-    q.Paginate(Classes(null))
-    q.Get(Class("customer"))
+    q.Paginate(q.Classes(null))
+    q.Get(q.Class("customer"))
     q.Paginate(q.Indexes(null))
 ```
 
 ## Exercise 3 - Enter some test data
 
 ```
-q.Create(Class("customer"),{
+q.Create(q.Class("customer"),{
         data:{
             "customerID" : "PRINI",
             "companyName" : "Princesa Isabel Vinhos",
@@ -61,7 +61,7 @@ q.Create(Class("customer"),{
 	    }
 })
 
-q.Create(Class("customer"),{
+q.Create(q.Class("customer"),{
     data:{
 		"customerID" : "LONEP",
 		"companyName" : "Lonesome Pine Restaurant",
