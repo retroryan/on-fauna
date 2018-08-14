@@ -144,7 +144,7 @@ In the cloud dashboard create a new secret key under [Cloud Keys](https://app.fa
 Now login to the fauna shell to the new database
 
 ```
-    fauna shell northwinds
+    fauna shell northwinds --secret=fnAC4Y7zuJACDdhCAB298lXN_hKurirN7pq0wSCn
 ```
 
 ## Exercise 6 - Indexes in Depth - Sorting, Transformation and Pagination
