@@ -26,7 +26,7 @@ lazy val root = project.in(file("."))
     "io.circe" %% "circe-parser" % circeVersion
    ),
     trapExit := false,
-    mappings in Universal ++= directory("datajson")
+    mappings in Universal ++= directory("data-json")
   )
   .enablePlugins(JavaAppPackaging)
 
