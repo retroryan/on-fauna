@@ -20,11 +20,12 @@ object Customer extends Logging {
 
   var CLASS_NAME = "customer"
   var INDEX_NAME = "customer_by_id"
-  val termFields = Seq(TermField("customerID", casefold = true))
-  val valueFields = Seq(RefField())
 
   def createSchema(implicit client: FaunaClient, ec: ExecutionContext): Future[Unit] = {
     logger.info(s"starting $CLASS_NAME create schema")
+
+    val termFields = Seq(TermField("customerID", casefold = true))
+    val valueFields = Seq(RefField())
 
     for {
       createClassResult <- createClass(CLASS_NAME)

@@ -1,4 +1,4 @@
-CreateClass({ name: "customer" })
+CreateClass({ name: "no_customer" })
 CreateClass({ name: "order" })
 
 CreateIndex(
@@ -399,3 +399,20 @@ Update(
 Get(Ref(Class("order"),"207553635813425668"),1534197421684875)
 
 Paginate(Events(Ref(Class("order"), "207553635813425668")))
+
+
+CreateDatabase({ name: "test" })
+
+Map(
+  ["production", "internal"],
+  Lambda("name",
+      CreateDatabase({ name: Var("name") })
+    )
+)
+
+Map(
+    [Database("production"), Database("internal")],
+    Lambda("db",
+          CreateKey({ role: "admin", database: Var("db") })
+    )
+)

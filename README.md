@@ -140,7 +140,6 @@ And then run:
 
 
 ```
-    export FAUNA_URL=http://localhost:8443
     export FAUNA_SECRET=sdfef2f23432
     export DB_NAME="northwinds"
 ```
@@ -289,7 +288,25 @@ Map(
 
 ```
 
+
+Get(Index("orders_by_customer_id"))
+
+Map(
+  Paginate(Match(Index("orders_by_customer_id"), "LONEP")),
+  Lambda("ordr",
+      Var("ordr")
+    )
+)
+
 Get(Index("all_orders"))
+
+Map(
+  Paginate(Match(Index("all_orders"))),
+  Lambda("ordr",
+      Var("ordr")
+    )
+)
+
 
 Let( {
   // Get the latest orders.

@@ -9,7 +9,7 @@ import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ValueReader
 
 
-case class FaunaDBConfig(endPoint: String, secret: String, deleteDB: Boolean, dbName:String)
+case class FaunaDBConfig(url: String, secret: String, deleteDB: Boolean, dbName:String)
 
 object FaunaDBConfig {
 

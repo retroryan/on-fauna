@@ -10,7 +10,8 @@ import FaunaUtils.{RefField, TermField, createClass}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-case class Address(street: String, city: String, region: String, country: String, phone: Option[String])
+case class Address(street: String, city: String, region: String,
+                   country: String, phone: Option[String])
 
 object Address extends Logging {
   implicit val addressCodec: Codec[Address] = Codec.caseClass[Address]
